@@ -2,6 +2,9 @@ from rest_framework.response import Response
 from django.shortcuts import HttpResponse
 from rest_framework.decorators import api_view
 import re
+
+from ussd.stkpush import stkpush
+
 from .models import Student,Fees,Transaction
 from .serializers import StudentSerializer,FeeSerializer,TransactionSerializer
 from django.core.mail import EmailMessage,send_mail
@@ -112,13 +115,14 @@ def ussd_callback(request):
             amount = (user_input[3])
             response = get_phone() 
             if len(user_input) == 5:
-                response = f"CON Phone is {user_input[-1]}"
+                stkpush(user_input[-1],amount)
+                response = f"CON Phone {user_input[-1]} amount is {amount}"
                  
     # eli
     return HttpResponse(response)
 
 def start():
-    response = "CON WELCOME TO FEEUSSD\n"
+    response = "CON WELCOME TO FEEWIZ\n"
     response += "1. Login\n"
     response += "2. Register"
     return response
@@ -195,8 +199,8 @@ def fee_statement():
 def fee_structure():
     return "END Your fee statement has been sent to your email"
     
-def stk_push(phone,amount):
-    pass
+# def stk_push(phone,amount):
+#     pass
 
 def daraja_response(request):
     pass
