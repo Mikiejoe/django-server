@@ -130,7 +130,7 @@ def login():
     Returns:
         _type_: str
     """
-    response = "CON Welcome to fee faster\n"
+    response = "CON Welcome to FeeWiz\n"
     response += "Enter your pin"
     return response
 
@@ -150,7 +150,7 @@ def get_pin():
 
 def main_menu(phone_number):
     """
-    If the authentication i successful the user is served
+    If the authentication is successful the user is served
     with this menu which is the main menu
     Returns:
         _type_: str
@@ -193,7 +193,7 @@ def fee_statement():
     return "END your fee statement has been sent to your student email"
 
 def fee_structure():
-    return "END Fee structure"
+    return "END Your fee statement has been sent to your email"
     
 def stk_push(phone,amount):
     pass
