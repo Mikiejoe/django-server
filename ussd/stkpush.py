@@ -27,7 +27,7 @@ def stkpush(phone,amount):
         "PartyB": 174379,
         "PhoneNumber": phone,
         "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/",
-        "AccountReference": "CompanyXLTD",
+        "AccountReference": "FEEWIZ",
         "TransactionDesc": "Payment of X" 
       }
 
