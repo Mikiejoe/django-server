@@ -32,4 +32,4 @@ def stkpush(phone,amount):
       }
 
     response = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
-    print(response.text.encode('utf8'))
+  
