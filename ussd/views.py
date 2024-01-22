@@ -192,7 +192,7 @@ def fee_structure():
 
 
 def sendemail(email):
-        """
+    """
     Send an email with the given email address.
 
     :param email: the email address to send the email to

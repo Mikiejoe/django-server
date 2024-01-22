@@ -10,11 +10,12 @@ passkey = settings.PASSKEY
 timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 shortCode = "174379"
 
-def stkpush(phone,amount):
+
+def stkpush(phone, amount):
 
     headers = {
-      'Content-Type': 'application/json',
-      'Authorization': f'Bearer {generate_access_token()}'
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {generate_access_token()}'
     }
 
     payload = {
@@ -28,8 +29,8 @@ def stkpush(phone,amount):
         "PhoneNumber": phone,
         "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/",
         "AccountReference": "FEEWIZ",
-        "TransactionDesc": "Payment of X" 
-      }
+        "TransactionDesc": "Payment of X"
+    }
 
-    response = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
-  
+    response = requests.request(
+        "POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers=headers, json=payload)
