@@ -9,7 +9,7 @@ djangorestframework==3.14.0
 gunicorn==21.2.0
 idna==3.6
 packaging==23.2
-psycopg2==2.9.9
+psycopg2-binary==2.9.9
 pytz==2023.3.post1
 requests==2.31.0
 schema==0.7.5
