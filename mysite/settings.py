@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,15 +80,27 @@ WSGI_APPLICATION = 'mysite.wsgi.app'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+# postgresql://:************@ep-blue-mud-a5i513b9.us-east-2.aws.neon.tech/?sslmode=require
+        # 'NAME': os.environ["PGDATABASE"],
+        # 'USER': os.environ["PGUSER"],
+        # 'PASSWORD': os.environ["PGPASSWORD"],
+        # 'HOST': os.environ["PGHOST"],
+        # 'PORT': os.environ["PGPORT"],
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get('DATABASE_URL')
+#     )
+# }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['USSD_DB'],
+        'USER': os.environ['USSD_USER'],
+        'PASSWORD': os.environ['USSD_PASSWORD'],
+        'HOST': os.environ['USSD_HOST'],
+        'PORT': os.environ['USSD_PORT'],  # Default PostgreSQL port
     }
 }
 
@@ -135,6 +148,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-PASSKEY = os.environ.get('PASSKEY')
+PASSKEY = os.environ.get('MPESA_PASSKEY')
 CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
-CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
+CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
