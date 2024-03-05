@@ -3,15 +3,19 @@ import requests
 from datetime import datetime
 from django.conf import settings
 import base64
-
-from ussd.acccess_token import generate_access_token
+from .models import Transaction
+from .acccess_token import generate_access_token
 
 passkey = settings.PASSKEY
+# datetime.
 timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 shortCode = "174379"
+def createTransaction(phone, amount,reg_no):
+    transaction = Transaction.objects.create(phone=phone, amount=amount, student_reg=reg_no)
+    print(transaction)
+    transaction.save()
 
-
-def stkpush(phone, amount):
+def stk_push(phone, amount,reg_no):
 
     headers = {
         'Content-Type': 'application/json',
@@ -24,13 +28,18 @@ def stkpush(phone, amount):
         "Timestamp": timestamp,
         "TransactionType": "CustomerPayBillOnline",
         "Amount": amount,
-        "PartyA": 254740510778,
+        "PartyA": 25474510778,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/",
+        "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/callback/",
         "AccountReference": "FEEWIZ",
         "TransactionDesc": "Payment of X"
     }
 
     response = requests.request(
         "POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers=headers, json=payload)
+    
+    if response.text["ResponseCode"] == "0":
+        createTransaction(phone, amount, reg_no)
+    return response.text        
+# print(stkpush(254740510778, 1))

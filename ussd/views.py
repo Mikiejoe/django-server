@@ -1,10 +1,15 @@
+from datetime import datetime
 from rest_framework.response import Response
 from django.shortcuts import HttpResponse
 from rest_framework.decorators import api_view
 from django.core.mail import EmailMessage
 import re
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status,views
+import json
 
-from ussd.stkpush import stkpush
+from ussd.stkpush import stk_push
+# from rest_framework.views import A
 
 from .models import Student, Fees, Transaction
 from .serializers import StudentSerializer, FeeSerializer, TransactionSerializer
@@ -12,32 +17,14 @@ from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
 
 
-@api_view(["POST"])
-def create_student(request):
-    data = request.data
-    serializer = StudentSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors)
 
 
-def checkRegNo(regno):
-    pattern = r'[A-Z][A-Z][A-Z]/[A-Z]/[0-9][0-9]-\d{5}/\d{4}'
-    match = (re.match(pattern, regno))
-    if match:
-        return True
-    else:
-        return False
-
-
-@api_view(['POST'])
+@api_view(['POST','GET'])
 def ussd_callback(request):
     session_id = request.POST.get('sessionId')
     service_code = request.POST.get('serviceCode')
     phone_number = request.POST.get('phoneNumber')
     text = request.POST.get('text')
-    print(text)
     user_input = text.split("*")
     cpin = None
     response = ""
@@ -46,12 +33,15 @@ def ussd_callback(request):
         pin = int(user_input[1])
 
     if len(user_input) > 2:
-        users = Student.objects.get(phone=phone_number)
-        cpin = users.pin
+        try:
+            users = Student.objects.get(phone=phone_number)
+            cpin = users.pin
+        except Student.DoesNotExist:
+            response = "END User does not exist"
 
     if user_input[0] == "2" and len(user_input) == 2:
         regno = user_input[1]
-        print(regno)
+        # print(regno)
         match = checkRegNo(regno)
         if match:
             try:
@@ -73,17 +63,18 @@ def ussd_callback(request):
 
     if len(user_input) == 2 and user_input[0] == '1':
         pin = int(user_input[1])
-        user = Student.objects.get(phone=phone_number)
+        try:
+            user = Student.objects.get(phone=phone_number)
 
-        if user.pin != None:
-            if user.pin == pin:
-                response = main_menu(phone_number)
-            else:
-                response = "END You have entered the wrong pin"
-        else:
+            if user.pin != None:
+                if user.pin == pin:
+                    response = main_menu(phone_number)
+                else:
+                    response = "END You have entered the wrong pin"
+        except Student.DoesNotExist:
             response = "END You need to register"
     elif cpin:
-        print(cpin == pin)
+        # print(cpin == pin)
         if text == f"1*{cpin}*1":
             response = pay_fee()
         elif text == f"1*{cpin}*2":
@@ -96,17 +87,19 @@ def ussd_callback(request):
             amount = (user_input[3])
             response = get_phone()
             if len(user_input) == 5:
-                stkpush(user_input[-1], amount)
-                # response = f"CON Phone {user_input[-1]} amount is {amount}"
+                print(users.reg_no)
+                res = stk_push(user_input[-1], amount,users.reg_no)
                 response = "END Your request is being processed. You will receive a request to enter pin shortly."
 
     return HttpResponse(response)
 
 
+
+
 def start():
     response = "CON WELCOME TO FEEWIZ\n"
     response += "1. Login\n"
-    response += "2. Register"
+    # response += "2. Register"
     return response
 
 
@@ -180,18 +173,19 @@ def showbalance(phone):
     return response
 
 
-def fee_statement(regno):
+def  fee_statement(regno):
     student = Student.objects.get(regno=regno)
     email = student.email
-    sendemail(email)
+    sendemail()
     return "END your fee statement has been sent to your student email"
 
 
 def fee_structure():
+    sendemail()
     return "END Your fee statement has been sent to your email"
 
 
-def sendemail(email):
+def sendemail(e="dmwas704@gmail.com"):
     """
     Send an email with the given email address.
 
@@ -199,10 +193,26 @@ def sendemail(email):
     :return: None
     """
     email = EmailMessage()
-    email.attach('fee_statement.pdf')
-    email.send(to=[email])
-    
+    email.body = "Your Fee statement is:"
+    email.to = [e]
+    # email.attach('fee_statement.pdf')
+    email.send()
 
-
-def daraja_response(request):
-    pass
+@api_view(['POST','GET'])
+def mpesacallback(request):
+    print(request.data)
+    my_dict = request.data
+    if my_dict["Body"]["stkCallback"]["ResultCode"] == 0:
+        date = datetime.strptime(str(my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][2]["Value"]), "%Y%m%d%H%M%S")
+        amount = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
+        phone = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"]
+        mpesa_code = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
+        transaction = Transaction.objects.create(mpesa_code=mpesa_code,amount=amount,phone=phone,date=date)
+        transaction.save()
+        print(transaction)
+        return Response({"hello":"hello"})
+    return Response({"hello":"hello"})
+# async def getbalance(phone):
+#     user = Student.objects.get(phone=phone)
+#     balance = user.fee_balance
+#     return balance
