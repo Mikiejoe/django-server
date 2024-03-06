@@ -15,10 +15,12 @@ from .models import Student, Fees, Transaction
 from .serializers import StudentSerializer, FeeSerializer, TransactionSerializer
 from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
 
 
 
-
+@permission_classes([AllowAny])
 @api_view(['POST','GET'])
 def ussd_callback(request):
     session_id = request.POST.get('sessionId')
