@@ -1,6 +1,7 @@
 
 import requests
 from datetime import datetime
+import json
 from django.conf import settings
 import base64
 from .models import Transaction
@@ -38,8 +39,10 @@ def stk_push(phone, amount,reg_no):
 
     response = requests.request(
         "POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers=headers, json=payload)
-    
-    if response.text["ResponseCode"] == "0":
+    # print(type(response.text))
+    # print(json.loads(response.text)['ResponseCode'])
+    print()
+    if json.loads(response.text)['ResponseCode'] == "0":
         createTransaction(phone, amount, reg_no)
     return response.text        
 # print(stkpush(254740510778, 1))

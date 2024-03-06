@@ -7,6 +7,7 @@ import re
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status,views
 import json
+from .api import checkRegNo
 
 from ussd.stkpush import stk_push
 # from rest_framework.views import A
@@ -29,15 +30,14 @@ def ussd_callback(request):
     text = request.POST.get('text')
     user_input = text.split("*")
     cpin = None
-    response = ""
-
+    response = "END Invalid Input"
     if user_input[0] == '1' and len(user_input) > 2:
-        pin = int(user_input[1])
+        pin = user_input[1]
 
     if len(user_input) > 2:
         try:
             users = Student.objects.get(phone=phone_number)
-            cpin = users.pin
+            cpin = pin
         except Student.DoesNotExist:
             response = "END User does not exist"
 
@@ -64,17 +64,14 @@ def ussd_callback(request):
         response = register()
 
     if len(user_input) == 2 and user_input[0] == '1':
-        pin = int(user_input[1])
+        pin = user_input[1]
         try:
-            user = Student.objects.get(phone=phone_number)
+            user = Student.objects.get(reg_no=pin)
 
-            if user.pin != None:
-                if user.pin == pin:
-                    response = main_menu(phone_number)
-                else:
-                    response = "END You have entered the wrong pin"
+            if user:
+                response = main_menu(phone_number)
         except Student.DoesNotExist:
-            response = "END You need to register"
+            response = "END Student With That Registration Number Does Not Exist!"
     elif cpin:
         # print(cpin == pin)
         if text == f"1*{cpin}*1":
@@ -92,6 +89,8 @@ def ussd_callback(request):
                 print(users.reg_no)
                 res = stk_push(user_input[-1], amount,users.reg_no)
                 response = "END Your request is being processed. You will receive a request to enter pin shortly."
+        else:
+            response = "END Invalid Input"
 
     return HttpResponse(response)
 
@@ -111,8 +110,8 @@ def login():
     Returns:
         _type_: str
     """
-    response = "CON Welcome to FeeWiz\n"
-    response += "Enter your pin"
+    response = "CON \n"
+    response = "CON Enter Registration Number"
     return response
 
 
