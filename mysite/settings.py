@@ -71,7 +71,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mysite.wsgi.app'
 SITE_ID = 1
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ['*']
 CORS_ALLOW_HEADERS = ['*']  # Allow all headers, including 'Authorization'
 
 
