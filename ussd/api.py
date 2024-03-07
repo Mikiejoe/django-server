@@ -40,7 +40,7 @@ def checkRegNo(regno):
     
 class TransactionView(generics.ListAPIView):
     serializer_class = TransactionSerializer
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.all().order_by('date')
     permission_classes = [AllowAny]
 
 class StudentsList(generics.ListAPIView):

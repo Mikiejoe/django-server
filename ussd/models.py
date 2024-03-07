@@ -19,10 +19,12 @@ class Transaction(models.Model):
     phone = models.CharField(max_length=20,null=True)
     date = models.DateField(auto_now=True)
     student_reg = models.CharField(max_length=50,null=True,blank=True)
+    created = models.DateTimeField(auto_now=True)
+    
     
     
     def __str__(self):
-        return self.phone
+        return self.mpesa_code
     
 class Fees(models.Model):
     pass

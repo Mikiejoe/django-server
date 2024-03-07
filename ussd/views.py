@@ -86,7 +86,7 @@ def ussd_callback(request):
             amount = (user_input[3])
             response = get_phone()
             if len(user_input) == 5:
-                print(users.reg_no)
+                # print(users.reg_no)
                 res = stk_push(user_input[-1], amount,users.reg_no)
                 response = "END Your request is being processed. You will receive a request to enter pin shortly."
         else:
@@ -199,21 +199,48 @@ def sendemail(e="dmwas704@gmail.com"):
     # email.attach('fee_statement.pdf')
     email.send()
 
+
+@permission_classes([AllowAny])
 @api_view(['POST','GET'])
 def mpesacallback(request):
     print(request.data)
     my_dict = request.data
     if my_dict["Body"]["stkCallback"]["ResultCode"] == 0:
-        date = datetime.strptime(str(my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][2]["Value"]), "%Y%m%d%H%M%S")
+        # date = datetime.strptime(str(my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][2]["Value"]), "%Y%m%d%H%M%S")
         amount = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
-        phone = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"]
-        mpesa_code = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
-        transaction = Transaction.objects.create(mpesa_code=mpesa_code,amount=amount,phone=phone,date=date)
-        transaction.save()
-        print(transaction)
+        phone = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
+        mpesa_code = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
+        # transaction = Transaction.objects.create(mpesa_code=mpesa_code,amount=amount,phone=phone)
+        t = Transaction.objects.filter(phone =phone).order_by('created').first()
+        t.mpesa_code = mpesa_code
+        t.amount = amount
+        t.phone = phone
+        t.save(force_update=True)
         return Response({"hello":"hello"})
     return Response({"hello":"hello"})
 # async def getbalance(phone):
 #     user = Student.objects.get(phone=phone)
 #     balance = user.fee_balance
 #     return balance
+
+# {'Body': {
+#     'stkCallback': {
+#     'MerchantRequestID': '53e3-4aa8-9fe0-8fb5e4092cdd753311',
+#       'CheckoutRequestID': 'ws_CO_07032024144507107740510778',
+#         'ResultCode': 0, 
+#         'ResultDesc': 'The service request is processed successfully.',
+#          'CallbackMetadata': {
+#              'Item': [
+#                  {'Name': 'Amount', 'Value': 1.0}, 
+#                  {'Name': 'MpesaReceiptNumber', 'Value': 'SC77AE93G5'}, 
+#                  {'Name': 'Balance'}, 
+#                  {'Name': 'TransactionDate', 'Value': 20240307144246}, 
+#                  {'Name': 'PhoneNumber', 'Value': 254740510778}
+#                       ]
+#                       }
+                      
+#                     }
+#     }
+# }
+
+print()

@@ -43,6 +43,7 @@ def stk_push(phone, amount,reg_no):
     # print(json.loads(response.text)['ResponseCode'])
     print()
     if json.loads(response.text)['ResponseCode'] == "0":
-        createTransaction(phone, amount, reg_no)
+        # createTransaction(phone, amount, reg_no)
+        pass
     return response.text        
 # print(stkpush(254740510778, 1))
