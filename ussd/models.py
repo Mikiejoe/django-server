@@ -7,7 +7,7 @@ class Student(models.Model):
     pin = models.IntegerField(null=True)
     fee_balance = models.FloatField()
     phone = models.CharField(max_length=20,unique=True,null=True)
-    email = models.EmailField(null=True)
+    email = models.EmailField(null=True,unique=True)
     admission_date = models.DateField(auto_now=True)
     
     def __str__(self):
@@ -20,7 +20,7 @@ class Transaction(models.Model):
     date = models.DateField(auto_now=True)
     student_reg = models.CharField(max_length=50,null=True,blank=True)
     created = models.DateTimeField(auto_now=True)
-    
+
     
     
     def __str__(self):
