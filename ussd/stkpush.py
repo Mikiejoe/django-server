@@ -32,7 +32,7 @@ def stk_push(phone, amount,reg_no):
         "PartyA": 25474510778,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/callback/",
+        "CallBackURL": "https://django-server-hazel.vercel.app/callback/",
         "AccountReference": "FEEWIZ",
         "TransactionDesc": "Payment of X"
     }
@@ -44,6 +44,6 @@ def stk_push(phone, amount,reg_no):
     print()
     if json.loads(response.text)['ResponseCode'] == "0":
         createTransaction(phone, amount, reg_no)
-        pass
+        # pass
     return response.text        
 # print(stkpush(254740510778, 1))
