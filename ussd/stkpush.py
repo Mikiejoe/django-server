@@ -34,7 +34,7 @@ def stk_push(phone, amount,reg_no):
         "PhoneNumber": phone,
         "CallBackURL": "https://django-server-hazel.vercel.app/callback/",
         "AccountReference": "FEEWIZ",
-        "TransactionDesc": "Payment of X"
+        "TransactionDesc": "Payment of fEE"
     }
 
     response = requests.request(
@@ -43,7 +43,7 @@ def stk_push(phone, amount,reg_no):
     # print(json.loads(response.text)['ResponseCode'])
     print()
     if json.loads(response.text)['ResponseCode'] == "0":
-        createTransaction(phone, amount, reg_no)
-        # pass
+        # createTransaction(phone, amount, reg_no)
+        pass
     return response.text        
 # print(stkpush(254740510778, 1))
