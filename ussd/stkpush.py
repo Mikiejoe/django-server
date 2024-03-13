@@ -13,7 +13,7 @@ timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 shortCode = "174379"
 def createTransaction(phone, amount,reg_no):
     transaction = Transaction.objects.create(phone=phone, amount=amount, student_reg=reg_no)
-    print(transaction)
+    # print(transaction)
     transaction.save()
 
 def stk_push(phone, amount,reg_no):
