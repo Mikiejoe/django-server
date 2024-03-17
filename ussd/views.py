@@ -1,4 +1,5 @@
 from datetime import datetime
+import asyncio
 from rest_framework.response import Response
 from django.shortcuts import HttpResponse
 from rest_framework.decorators import api_view
@@ -36,8 +37,8 @@ def ussd_callback(request):
 
     if len(user_input) > 2:
         try:
-            users = Student.objects.get(phone=phone_number)
-            cpin = pin
+            users = Student.objects.get(reg_no=user_input[1])
+            cpin = users.reg_no
         except Student.DoesNotExist:
             response = "END User does not exist"
 
@@ -69,7 +70,7 @@ def ussd_callback(request):
             user = Student.objects.get(reg_no=pin)
 
             if user:
-                response = main_menu(phone_number)
+                response = main_menu(user)
         except Student.DoesNotExist:
             response = "END Student With That Registration Number Does Not Exist!"
     elif cpin:
@@ -77,17 +78,18 @@ def ussd_callback(request):
         if text == f"1*{cpin}*1":
             response = pay_fee()
         elif text == f"1*{cpin}*2":
-            response = fee_statement()
+            response = fee_statement(cpin)
         elif text == f"1*{cpin}*3":
             response = showbalance(phone_number)
         elif text == f"1*{cpin}*4":
-            response = fee_structure()
+            response = fee_structure(cpin)
         elif len(user_input) >= 4 and user_input[0] == '1':
             amount = (user_input[3])
             response = get_phone()
             if len(user_input) == 5:
                 # print(users.reg_no)
-                res = stk_push(user_input[-1], amount,users.reg_no)
+                # loop = asyncio.get_event_loop()
+                asyncio.run(stk_push(user_input[-1], amount,users.reg_no))
                 response = "END Your request is being processed. You will receive a request to enter pin shortly."
         else:
             response = "END Invalid Input"
@@ -131,14 +133,14 @@ def get_pin():
     return response
 
 
-def main_menu(phone_number):
+def main_menu(user):
     """
     If the authentication is successful the user is served
     with this menu which is the main menu
     Returns:
         _type_: str
     """
-    user = Student.objects.get(phone=phone_number)
+    
     response = f"CON Hey {user.name} What would you like to do?\n"
     response += "1 Pay fees\n"
     response += "2. View fee statement\n"
@@ -153,7 +155,7 @@ def pay_fee():
 
 
 def get_phone():
-    response = "CON Enter phone number to pay"
+    response = "CON Enter phone number to pay as 2541XXXXXXX or 2547XXXXXXX"
     return response
 
 
@@ -177,12 +179,14 @@ def showbalance(phone):
 def  fee_statement(regno):
     student = Student.objects.get(regno=regno)
     email = student.email
-    sendemail()
+    sendemail(email)
     return "END your fee statement has been sent to your student email"
 
 
-def fee_structure():
-    sendemail()
+def fee_structure(regno):
+    student = Student.objects.get(regno=regno)
+    email = student.email
+    sendemail(email)
     return "END Your fee statement has been sent to your email"
 
 
@@ -211,7 +215,7 @@ def mpesacallback(request):
         phone = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
         mpesa_code = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
         # transaction = Transaction.objects.create(mpesa_code=mpesa_code,amount=amount,phone=phone)
-        t = Transaction.objects.filter(phone =phone).order_by('created').first()
+        t = Transaction.objects.filter(phone = phone).first()
         t.mpesa_code = mpesa_code
         t.amount = amount
         t.phone = phone
