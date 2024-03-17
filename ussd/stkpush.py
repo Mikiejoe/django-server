@@ -60,6 +60,7 @@ async def create_transaction(phone, amount, reg_no):
 #     return response.text 
     
 async def stk_push(phone, amount, reg_no):
+    print("pushing")
     async with aiohttp.ClientSession() as session:
         headers = {
             'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ async def stk_push(phone, amount, reg_no):
             "AccountReference": "FEEWIZ",
             "TransactionDesc": "Payment of fEE"
         }
-
+        print("hitting the endpoint")
         async with session.post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers=headers, json=payload) as response:
             data = await response.json()
             print(data)
