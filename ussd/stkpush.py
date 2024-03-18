@@ -76,8 +76,8 @@ async def stk_push(phone, amount, reg_no):
             "PartyA": 25474510778,
             "PartyB": 174379,
             "PhoneNumber": phone,
-            "CallBackURL": "https://django-server-hazel.vercel.app/callback/",
-            # "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/callback/",
+            # "CallBackURL": "https://django-server-hazel.vercel.app/callback/",
+            "CallBackURL": "https://21bdbn4c-8000.uks1.devtunnels.ms/callback/",
             "AccountReference": "FEEWIZ",
             "TransactionDesc": "Payment of fEE"
         }

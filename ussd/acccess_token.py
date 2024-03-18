@@ -17,12 +17,12 @@ def generate_access_token():
             "Content-Type": "application/json"
         }
         # Send the request and parse the response
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers).json()
         print("response= ",response)
 
-        response = response.json()
+        # response = response.json()
 
-        print("json response= ",response)
+        # print("json response= ",response)
 
         print("RESPONSE")
         # name = json
