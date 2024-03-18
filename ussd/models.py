@@ -25,7 +25,7 @@ class Transaction(models.Model):
         ordering = ['-created']
 
     def __str__(self) -> str:
-        return self.phone
+        return f'{self.mpesa_code} {self.amount} {self.date} '
     
     
 class Fees(models.Model):

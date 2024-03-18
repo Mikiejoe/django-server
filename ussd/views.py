@@ -145,7 +145,7 @@ def main_menu(user):
     response += "1 Pay fees\n"
     response += "2. View fee statement\n"
     response += "3. View fee balance\n"
-    response += "4. View fee structure\n"
+    # response += "4. View fee structure\n"
     return response
 
 
@@ -177,14 +177,20 @@ def showbalance(phone):
 
 
 def  fee_statement(regno):
-    student = Student.objects.get(regno=regno)
-    email = student.email
-    sendemail(email,"your fee statement is")
-    return "END your fee statement has been sent to your student email"
+    transactions = Transaction.objects.filter(student_reg = regno)[:5]
+    response = "END Your Fee Statement:\nCode    Amount Date\n"
+    if transactions.count()>0:
+        for t in transactions:
+            response += str(t) + "\n"
+    else:
+        response += "You Have no transactions!!"
+    # email = student.email
+    # sendemail(email,"your fee statement is")
+    return response
 
 
 def fee_structure(regno):
-    student = Student.objects.get(regno=regno)
+    student = Student.objects.get(reg_no=regno)
     email = student.email
     sendemail(email,"Your fee structure is")
     return "END Your fee statement has been sent to your email"
@@ -219,6 +225,7 @@ def mpesacallback(request):
         reg_no = t.student_reg
         student = Student.objects.get(reg_no=reg_no)
         student.fee_balance = student.fee_balance - float(amount)
+        student.save()
         t.mpesa_code = mpesa_code
         t.amount = amount
         t.phone = phone
