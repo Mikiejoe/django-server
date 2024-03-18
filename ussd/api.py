@@ -40,7 +40,7 @@ def checkRegNo(regno):
     
 class TransactionView(generics.ListAPIView):
     serializer_class = TransactionSerializer
-    queryset = Transaction.objects.all().order_by('-created')
+    queryset = Transaction.objects.objects.exclude(mpesa_code__isnull=True).order_by('-created')
     permission_classes = [AllowAny]
 
 class StudentsList(generics.ListAPIView):
