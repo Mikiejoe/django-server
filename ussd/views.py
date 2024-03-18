@@ -179,18 +179,18 @@ def showbalance(phone):
 def  fee_statement(regno):
     student = Student.objects.get(regno=regno)
     email = student.email
-    sendemail(email)
+    sendemail(email,"your fee statement is")
     return "END your fee statement has been sent to your student email"
 
 
 def fee_structure(regno):
     student = Student.objects.get(regno=regno)
     email = student.email
-    sendemail(email)
+    sendemail(email,"Your fee structure is")
     return "END Your fee statement has been sent to your email"
 
 
-def sendemail(e="dmwas704@gmail.com"):
+def sendemail(e:str,message:str):
     """
     Send an email with the given email address.
 
@@ -198,7 +198,7 @@ def sendemail(e="dmwas704@gmail.com"):
     :return: None
     """
     email = EmailMessage()
-    email.body = "Your Fee statement is:"
+    email.body = message
     email.to = [e]
     # email.attach('fee_statement.pdf')
     email.send()
@@ -216,35 +216,12 @@ def mpesacallback(request):
         mpesa_code = my_dict["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
         # transaction = Transaction.objects.create(mpesa_code=mpesa_code,amount=amount,phone=phone)
         t = Transaction.objects.filter(phone = phone).first()
+        reg_no = t.student_reg
+        student = Student.objects.get(reg_no=reg_no)
+        student.fee_balance = student.fee_balance - float(amount)
         t.mpesa_code = mpesa_code
         t.amount = amount
         t.phone = phone
         t.save(force_update=True)
         return Response({"hello":"hello"})
     return Response({"hello":"hello"})
-# async def getbalance(phone):
-#     user = Student.objects.get(phone=phone)
-#     balance = user.fee_balance
-#     return balance
-
-# {'Body': {
-#     'stkCallback': {
-#     'MerchantRequestID': '53e3-4aa8-9fe0-8fb5e4092cdd753311',
-#       'CheckoutRequestID': 'ws_CO_07032024144507107740510778',
-#         'ResultCode': 0, 
-#         'ResultDesc': 'The service request is processed successfully.',
-#          'CallbackMetadata': {
-#              'Item': [
-#                  {'Name': 'Amount', 'Value': 1.0}, 
-#                  {'Name': 'MpesaReceiptNumber', 'Value': 'SC77AE93G5'}, 
-#                  {'Name': 'Balance'}, 
-#                  {'Name': 'TransactionDate', 'Value': 20240307144246}, 
-#                  {'Name': 'PhoneNumber', 'Value': 254740510778}
-#                       ]
-#                       }
-                      
-#                     }
-#     }
-# }
-
-print()
