@@ -18,7 +18,8 @@ def generate_access_token():
         }
         # Send the request and parse the response
         response = requests.get(url, headers=headers).json()
-        print(response)
+
+        print("RESPONSE")
         # name = json
         # Check for errors and return the access token
         if "access_token" in response.keys():
