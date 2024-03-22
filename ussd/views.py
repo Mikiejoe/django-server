@@ -9,10 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status,views
 import json
 from .api import checkRegNo
+# from ussd.stk_push import stk_push
 
 from ussd.stkpush import stk_push
-# from rest_framework.views import A
-
 from .models import Student, Fees, Transaction
 from .serializers import StudentSerializer, FeeSerializer, TransactionSerializer
 from django.core.mail import EmailMessage, send_mail
