@@ -28,6 +28,8 @@ async def stk_push(phone, amount, reg_no):
     print("pushing")
     access_token = generate_access_token()
     print("access token", access_token)
+    password = base64.b64encode((shortCode + passkey + timestamp).encode('utf-8')).decode('utf-8')
+    print(password)
     # async with aiohttp.ClientSession() as session:
     headers = {
         'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ async def stk_push(phone, amount, reg_no):
 
     payload = {
         "BusinessShortCode": 174379,
-        "Password": base64.b64encode((shortCode + passkey + timestamp).encode('utf-8')).decode('utf-8'),
+        "Password": password,
         "Timestamp": timestamp,
         "TransactionType": "CustomerPayBillOnline",
         "Amount": amount,

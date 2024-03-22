@@ -10,6 +10,7 @@ from rest_framework import status,views
 import json
 from .api import checkRegNo
 from ussd.stk_push import stk_push
+from .acccess_token import generate_access_token
 
 # from ussd.stkpush import stk_push
 from .models import Student, Fees, Transaction
@@ -57,6 +58,7 @@ def ussd_callback(request):
             response = "END Not a valid registration number!!"
 
     if text == "":
+        # print(generate_access_token())
         response = start()
     elif text == "1":
         response = login()
@@ -88,6 +90,8 @@ def ussd_callback(request):
             if len(user_input) == 5:
                 # print(users.reg_no)
                 # loop = asyncio.get_event_loop()
+
+
                 stk_push(user_input[-1], amount,users.reg_no)
                 response = "END Your request is being processed. You will receive a request to enter pin shortly."
         else:
