@@ -9,9 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status,views
 import json
 from .api import checkRegNo
-# from ussd.stk_push import stk_push
+from ussd.stk_push import stk_push
 
-from ussd.stkpush import stk_push
+# from ussd.stkpush import stk_push
 from .models import Student, Fees, Transaction
 from .serializers import StudentSerializer, FeeSerializer, TransactionSerializer
 from django.core.mail import EmailMessage, send_mail
@@ -88,7 +88,7 @@ def ussd_callback(request):
             if len(user_input) == 5:
                 # print(users.reg_no)
                 # loop = asyncio.get_event_loop()
-                asyncio.run(stk_push(user_input[-1], amount,users.reg_no))
+                stk_push(user_input[-1], amount,users.reg_no)
                 response = "END Your request is being processed. You will receive a request to enter pin shortly."
         else:
             response = "END Invalid Input"
