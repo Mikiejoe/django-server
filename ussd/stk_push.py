@@ -205,7 +205,7 @@ def stk_push(phone, amount, reg_no):
 
     else:
         print(data["errorMessage"])
-        return "Cannot handle your request at this time, Try again later.."
+        return "Cannot process your request at this time, Try again later.."
 #     print("json",response.json())
 #     # print(json.loads(response.text)['ResponseCode'])
 
