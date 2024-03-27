@@ -9,8 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status,views
 import json
 from .api import checkRegNo
-from ussd.stk_push import stk_push
-from .acccess_token import generate_access_token
+from ussd.stk_push import stk_push,generate_access_token
+# from .acccess_token import generate_access_token
 
 # from ussd.stkpush import stk_push
 from .models import Student, Fees, Transaction
@@ -25,6 +25,8 @@ from rest_framework.decorators import permission_classes
 @permission_classes([AllowAny])
 @api_view(['POST','GET'])
 def ussd_callback(request):
+    # generate_access_token()
+    # stk_push("254740510778","1","SIT/B/01-02668/2021")
     session_id = request.POST.get('sessionId')
     service_code = request.POST.get('serviceCode')
     phone_number = request.POST.get('phoneNumber')
@@ -92,8 +94,8 @@ def ussd_callback(request):
                 # loop = asyncio.get_event_loop()
 
 
-                stk_push(user_input[-1], amount,users.reg_no)
-                response = "END Your request is being processed. You will receive a request to enter pin shortly."
+                message = stk_push(user_input[-1], amount,users.reg_no)
+                response = f"END {message}"
         else:
             response = "END Invalid Input"
 
